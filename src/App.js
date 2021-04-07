@@ -7,15 +7,35 @@ import './App.css';
 
 import Home from './views/Home';
 import Header from './components/Header';
-import Chat from './views/Chat';
+import Chats from './views/Chats';
+import Profile from './views/Profile';
+import OpenChat from './views/OpenChat';
 
 function App() {
   return (
     <div className="app">
-      <Header />
       <Router>
-        <Route to="/" exact component={Home} />
-        <Route to="/chat" exact component={Chat} />
+        
+        <Route path="/" exact>
+          <Header />
+          <Home />
+        </Route>
+
+        <Route path="/chat" exact>
+          <Header backButton="/" />
+          <Chats />
+        </Route>
+
+        <Route path="/chat/:chatId" exact>
+          <Header backButton="/chat" />
+          <OpenChat />
+        </Route>
+
+        <Route path="/profile" exact>
+          <Header backButton="/" />
+          <Profile />
+        </Route>
+
       </Router>
     </div>
   );

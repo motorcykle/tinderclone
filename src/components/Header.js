@@ -1,21 +1,48 @@
 import { IconButton } from '@material-ui/core';
-import { Forum, Person } from '@material-ui/icons';
+import { ArrowBackIos, Forum, Person } from '@material-ui/icons';
 import React from 'react';
 import styled from 'styled-components';
+import { Link, useLocation } from 'react-router-dom';
 
-const HomeHeader = () => {
+const HomeHeader = ({ backButton }) => {
+  const location =  useLocation()
+
   return (
     <HeaderContainer>
       <div className="container">
-      <IconButton>
-      <Person />
-      </IconButton>
+      {!backButton ? (
+        <Link to="/profile">
+          <IconButton>
+          <Person />
+          </IconButton>
+        </Link>
+      ) : (
+        <Link to={`${backButton}`}>
+          <IconButton>
+          <ArrowBackIos />
+          </IconButton>
+        </Link>
+      )}
 
-      <img src="https://uxwing.com/wp-content/themes/uxwing/download/10-brands-and-social-media/tinder.png" alt="" id="header__logo"/>
+      <Link to="/">
+        <img src="https://uxwing.com/wp-content/themes/uxwing/download/10-brands-and-social-media/tinder.png" alt="" id="header__logo"/>
+      </Link>
+
+      {location.pathname === '/chat' ? (
+        <Link to="/profile">
+          <IconButton>
+          <Person />
+          </IconButton>
+        </Link>
+      ) : (
+        <Link to="/chat">
+          <IconButton>
+          <Forum />
+          </IconButton>
+        </Link>
+      )}
+
       
-      <IconButton>
-      <Forum />
-      </IconButton>
       </div>
     </HeaderContainer>
   );

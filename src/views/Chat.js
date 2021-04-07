@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HomeHeader = () => {
+const Chat = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const HomeHeader = () => {
   );
 }
 
-export default HomeHeader;
+export default Chat;

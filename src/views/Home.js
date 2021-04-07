@@ -1,11 +1,18 @@
 import React from 'react';
+import styled from 'styled-components';
+import TinderCards from '../components/TinderCards';
+
 
 const Home = () => {
   return (
-    <div>
-      
-    </div>
+    <HomeContainer>
+      <TinderCards />
+    </HomeContainer>
   );
 }
 
 export default Home;
+
+const HomeContainer = styled.div`
+
+`;

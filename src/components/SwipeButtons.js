@@ -3,7 +3,7 @@ import { Close, Favorite, FlashOn, Replay, StarRate } from '@material-ui/icons';
 import React from 'react';
 import styled from 'styled-components';
 
-const SwipeButtons = () => {
+const SwipeButtons = ({ swipe }) => {
   return (
     <SwipeButtonsContainer>
       <div className="container">
@@ -11,7 +11,7 @@ const SwipeButtons = () => {
         <Replay  />
       </IconButton>
       
-      <IconButton id="swipeBtn__close">
+      <IconButton id="swipeBtn__close" onClick={() => swipe("left")}>
         <Close  />
       </IconButton>
 
@@ -19,7 +19,7 @@ const SwipeButtons = () => {
         <StarRate  />
       </IconButton>
       
-      <IconButton id="swipeBtn__favorite">
+      <IconButton id="swipeBtn__favorite" onClick={() => swipe("right")}>
         <Favorite  />
       </IconButton>
 

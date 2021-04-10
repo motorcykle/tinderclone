@@ -1,31 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 import TinderCard from 'react-tinder-card';
 import styled from 'styled-components';
 import db from '../firebase';
 
-const TinderCards = () => {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    
-    const unsubscribe = db
-    .collection('people')
-    .onSnapshot(snapshot => {
-      const userDocs = snapshot.docs.map(doc => ({id: doc.id, data: doc.data()}));
-      setUsers(userDocs);
-    })
-
-    return unsubscribe;
-
-  }, []);
-
+const TinderCards = ({ users, setUsers, childRefs }) => {
   return (
     <TinderCardsContainer>
       <div className="cards__container container">
-      {users.map((user) => (
+      {users.map((user, index) => (
         <TinderCard
+          ref={childRefs[index]}
           className="swipe"
+          onSwipe={(dir) => {
+            console.log(dir)
+            
+          }}
+          onCardLeftScreen={() => setUsers(prev => prev.slice(0, prev.length - 1))}
           preventSwipe={['up', 'down']}
           key={user.id}
         >

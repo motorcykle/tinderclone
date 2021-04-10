@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Route
@@ -10,11 +10,34 @@ import Header from './components/Header';
 import Chats from './views/Chats';
 import Profile from './views/Profile';
 import OpenChat from './views/OpenChat';
+import { auth } from './firebase';
+import Auth from './views/Auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout, selectUser } from './features/userSlice';
 
 function App() {
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged( user => {
+      if (user) {
+        const { uid, photoURL, email, displayName } = user;
+        dispatch(login({ uid, photoURL, email, displayName }));
+      } else {
+        dispatch(logout());
+      }
+    })
+
+    return unsubscribe;
+  }, []);
+
   return (
     <div className="app">
-      <Router>
+      {!user ? 
+      <Auth />
+      :
+      (<Router>
         
         <Route path="/" exact>
           <Header />
@@ -36,7 +59,7 @@ function App() {
           <Profile />
         </Route>
 
-      </Router>
+      </Router>)}
     </div>
   );
 }

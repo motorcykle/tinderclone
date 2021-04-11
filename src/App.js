@@ -9,15 +9,18 @@ import Home from './views/Home';
 import Header from './components/Header';
 import Chats from './views/Chats';
 import Profile from './views/Profile';
+import ViewProfile from './views/ViewProfile';
 import OpenChat from './views/OpenChat';
-import { auth } from './firebase';
+import db, { auth } from './firebase';
 import Auth from './views/Auth';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, logout, selectUser } from './features/userSlice';
+import { login, logout, selectUser, setData } from './features/userSlice';
+import { selectProfileUID } from './features/appSlice';
 
 function App() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  const profileUID = useSelector(selectProfileUID);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged( user => {
@@ -32,8 +35,22 @@ function App() {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+    const unsubscribe = db
+    .collection("users").doc(user.uid)
+    .onSnapshot((doc) => {
+      dispatch(setData(doc.data()));
+    });
+
+    return unsubscribe;
+  }, [user])
+
   return (
     <div className="app">
+
+      {profileUID && <ViewProfile />}
+
       {!user ? 
       <Auth />
       :

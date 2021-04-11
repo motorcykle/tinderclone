@@ -52,6 +52,7 @@ export default HomeHeader;
 
 const HeaderContainer = styled.nav`
   border-bottom: 1px solid #f9f9f9;
+  width: 100%;
 
   .container {
     display: flex;

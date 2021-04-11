@@ -35,6 +35,7 @@ export default SwipeButtons;
 
 const SwipeButtonsContainer = styled.nav`
   border-top: 1px solid #f9f9f9;
+  width: 100vw;
   .container {
     display: flex;
     align-items: center;

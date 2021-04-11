@@ -1,23 +1,48 @@
+import { Button } from '@material-ui/core';
 import React from 'react';
-import { auth, provider } from '../firebase';
+import db, { auth, provider } from '../firebase';
 
 const Auth = () => {
 
   const authMethod = () => {
     auth
       .signInWithPopup(provider)
-      .then((result) => {
+      .then((data) => {
+        const { displayName, photoURL, email } = data.user;
 
+        if (data.additionalUserInfo.isNewUser) {
+          db
+          .collection("users")
+          .doc(data.user.uid)
+          .set({
+            user: { 
+              displayName, photoURL, email,
+              preference: '',
+              gender: '',
+              age: 0
+            },
+            profile: {
+              chosenImage: '',
+              images: [],
+              description: '',
+            },
+            lefts: [],
+            rights: [],
+          })
+          .then(() => {
+            console.log("Document successfully written!");
+          });
+        }
       }).catch((error) => {
-
+        console.error(error);
       });
   }
 
   return (
     <div>
-      <button onClick={authMethod}>
+      <Button variant="outlined" onClick={authMethod}>
         LOGIN WITH GOOGLE
-      </button>
+      </Button>
     </div>
   );
 }

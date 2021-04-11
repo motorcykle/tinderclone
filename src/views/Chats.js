@@ -40,5 +40,6 @@ const Chats = () => {
 export default Chats;
 
 const ChatsContainer = styled.div`
-
+  flex: 1;
+  width: 100%;
 `;

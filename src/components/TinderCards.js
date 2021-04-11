@@ -1,13 +1,24 @@
 import React, { useEffect, useMemo } from 'react';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import TinderCard from 'react-tinder-card';
 import styled from 'styled-components';
+import { selectUserData } from '../features/userSlice';
 import db from '../firebase';
 
 const TinderCards = ({ users, setUsers, childRefs }) => {
+  const userData = useSelector(selectUserData);
+
+  const youAreGood = 
+    userData?.user.gender && 
+    userData?.user.preference && 
+    userData?.profile.chosenImage && 
+    userData?.user.age;
+  
   return (
     <TinderCardsContainer>
-      <div className="cards__container container">
+    {!youAreGood ? <small className="youAreGood__text">Please go to your profile and set your preference, age, gender and image.</small> : 
+    <div className="cards__container container">
       {users.map((user, index) => (
         <TinderCard
           ref={childRefs[index]}
@@ -26,7 +37,7 @@ const TinderCards = ({ users, setUsers, childRefs }) => {
           </div>
         </TinderCard>
       ))}
-      </div>
+      </div>}
     </TinderCardsContainer>
   );
 }
@@ -36,6 +47,15 @@ export default TinderCards;
 const TinderCardsContainer = styled.div`
   flex: 1;
   display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .youAreGood__text {
+    text-align: center;
+    font-weight: 500;
+    color: grey;
+    font-size: 14px;
+  }
 
   .container {
     display: flex;

@@ -20,6 +20,10 @@ const Profile = () => {
   const [gender, setGender] = useState("");
   const [preference, setPreference] = useState("");
 
+  const userDoc = db
+    .collection('users')
+    .doc(user?.uid);
+
   useEffect(() => {
     if (userData) {
       setDesc(userData.profile.description)
@@ -28,10 +32,6 @@ const Profile = () => {
       setPreference(userData.user.preference)
     }
   }, [userData])
-
-  const userDoc = db
-    .collection('users')
-    .doc(user?.uid);
 
   const setChosenImage = (url) => {
     userDoc.update({ "profile.chosenImage": url });
@@ -42,6 +42,14 @@ const Profile = () => {
       if (prev !== target.value) setChange(true)
       return target.value
     })
+  }
+
+  const handleSave = () => {
+    userDoc.update({ "user.gender": gender });
+    userDoc.update({ "user.preference": preference });
+    userDoc.update({ "user.age": age });
+    userDoc.update({ "profile.description": desc });
+    setChange(false);
   }
 
   useEffect(() => {
@@ -81,7 +89,7 @@ const Profile = () => {
               variant="contained" 
               color="secondary" 
               className="headerSave__btn" 
-              onClick={() => console.log("save")}>
+              onClick={handleSave}>
                 SAVE
             </Button>
             }
@@ -97,12 +105,14 @@ const Profile = () => {
               {userData?.profile.chosenImage && <img src={userData?.profile.chosenImage} alt=""/>}
             </div>
             <div className="otherImages">
-              {photos?.length ? photos.slice(1).map(photo => {
+              {photos?.length ? photos.map(photo => {
                 const urlParams = new URLSearchParams(photo);
+                const choosenParams = new URLSearchParams(userData?.profile.chosenImage);
                 const token = urlParams.get('token');
+                const chosenToken = choosenParams.get('token');
                 console.log(token)
                 return (
-                  <div key={token} className="otherImage__container imageContainer">
+                  <div onClick={() => setChosenImage(photo)} key={token} className={`otherImage__container imageContainer ${chosenToken === token && "chosenImage"}`}>
                     <img src={photo} alt=""/>
                   </div>
                 )
@@ -216,6 +226,13 @@ const ProfileContainer = styled.div`
         flex-wrap: wrap;
         justify-items: center;
         align-content: flex-start;
+        .chosenImage {
+          border: 2px solid rgb(255,112,112);
+          padding: .2em;
+          img {
+            border-radius: 25px;
+          }
+        }
         @media (max-width: 480px) {
           justify-content: center;
         }

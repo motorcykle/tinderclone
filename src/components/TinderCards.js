@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo } from 'react';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addProfileUID } from '../features/appSlice';
 import TinderCard from 'react-tinder-card';
 import styled from 'styled-components';
 import { selectUserData } from '../features/userSlice';
 import db from '../firebase';
 
 const TinderCards = ({ users, setUsers, childRefs }) => {
+  const dispatch = useDispatch();
   const userData = useSelector(selectUserData);
 
   const youAreGood = 
@@ -25,15 +27,19 @@ const TinderCards = ({ users, setUsers, childRefs }) => {
           className="swipe"
           onSwipe={(dir) => {
             console.log(dir)
-            
           }}
           onCardLeftScreen={() => setUsers(prev => prev.slice(0, prev.length - 1))}
           preventSwipe={['up', 'down']}
           key={user.id}
         >
-          <div className="card" style={{ backgroundImage: `url(${user.data.url})`}}>
-            <img src={user.data.url} alt=""/>
-            <h3>{user.data.name}</h3>
+          <div className="card" 
+          onClick={(e) => {
+            e.stopPropagation();
+            dispatch(addProfileUID(user.id))
+          }} 
+          style={{ backgroundImage: `url(${user.data.profile.chosenImage})`}}>
+            <img src={user.data.profile.chosenImage} alt=""/>
+            <h3>{user.data.user.displayName}</h3>
           </div>
         </TinderCard>
       ))}

@@ -10,27 +10,41 @@ import db, { storeage } from '../firebase';
 const ViewProfile = () => {
   const dispatch = useDispatch();
   const [photos, setPhotos] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
   const uid = useSelector(selectProfileUID);
+  const [currentImg, setCurrentImg] = useState(0)
 
   const removeUID = (e) => {
     dispatch(removeProfileUID())
   };
 
+  const HandleImageChange = (dir) => {
+    if (dir === "right") {
+      if (currentImg < photos.length - 1) {
+        setCurrentImg(prev => ++prev)
+      } else {
+        setCurrentImg(0)
+      }
+    } else {
+      if (currentImg === 0) {
+        setCurrentImg(photos.length - 1)
+      } else {
+        setCurrentImg(prev => --prev)
+      }
+    }
+  }
+
+  useEffect(() => {console.log(selectedUser)}, [selectedUser])
+
   useEffect(() => {
     db.collection('users').doc(uid).onSnapshot(snapshot => {
-      console.log(snapshot)
+      const data = snapshot.data();
+      const chosenImgUrl = data.profile.chosenImage;
+      setSelectedUser(data)
+      setPhotos([chosenImgUrl, ...data.profile.images.filter(url => url !== chosenImgUrl)])
     })
   }, [uid])
 
-  useEffect(() => {
-    storeage
-      .ref(uid)
-      .listAll()
-      .then( async list => {
-        const listTing = await Promise.all(list.items.map( async item => await item.getDownloadURL()))
-        setPhotos(listTing)
-      });
-  }, [uid])
 
   return (
     <ViewProfileContainer onClick={removeUID}>
@@ -39,21 +53,22 @@ const ViewProfile = () => {
           <Close />
         </IconButton>
 
-        <div className="card" style={{ backgroundImage: `url('https://instagram.farn1-1.fna.fbcdn.net/v/t51.2885-15/e35/s1080x1080/166828320_1217719698686529_4384029468339889115_n.jpg?tp=1&_nc_ht=instagram.farn1-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=0vVXI0hVB0gAX_Pk1i-&edm=AP_V10EAAAAA&ccb=7-4&oh=6b7b8cccf4b1cc67685ca2ada0c1b95f&oe=6091AF00&_nc_sid=4f375e')`}}>
-          <img src={'https://instagram.farn1-1.fna.fbcdn.net/v/t51.2885-15/e35/s1080x1080/166828320_1217719698686529_4384029468339889115_n.jpg?tp=1&_nc_ht=instagram.farn1-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=0vVXI0hVB0gAX_Pk1i-&edm=AP_V10EAAAAA&ccb=7-4&oh=6b7b8cccf4b1cc67685ca2ada0c1b95f&oe=6091AF00&_nc_sid=4f375e'} alt=""/>
+        <div className="card" style={{ backgroundImage: `url(${photos[currentImg]})`}}>
+          <img src={photos[currentImg]} alt=""/>
           <div className="btns">
-            <IconButton>
+            <IconButton onClick={() => HandleImageChange('left')}>
               <ArrowBack />
             </IconButton>
 
-            <IconButton>
+            <IconButton onClick={() => HandleImageChange('right')}>
               <ArrowForward />
             </IconButton>
           </div>
         </div>
 
         <div className="profile__body">
-          <h2>Bhad Bhabie, 18</h2>
+          <h2>{selectedUser?.user.displayName}, {selectedUser?.user.age}</h2>
+          <p className="profile__desc" >{selectedUser?.profile.description}</p>
         </div>
         
       </div>
@@ -112,7 +127,7 @@ const ViewProfileContainer = styled.div`
         margin: 0 auto;
       }
       .btns {
-        padding: 0 5px;
+        padding: 0 10px;
         display: flex;
         height: 100%;
         align-items: center;
@@ -121,6 +136,7 @@ const ViewProfileContainer = styled.div`
         width: 100%;
         > button {
           background-color: rgba(1, 1, 1, 0.3);
+          color: whitesmoke;
         }
       }
     }
@@ -130,6 +146,9 @@ const ViewProfileContainer = styled.div`
         font-weight: 500;
         padding-bottom: 7.5px;
         border-bottom: 1px solid lightgrey;
+      }
+      .profile__desc {
+        white-space:  pre;
       }
     }
   }

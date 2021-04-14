@@ -2,21 +2,30 @@ import { Avatar } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
 import React from 'react';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
+import { addSelectedChat, removeSelectedChat } from '../features/appSlice';
 
-const ChatRow = ({ name, message, profileImg, timestamp, id }) => {
+const ChatRow = ({ data, id }) => {
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const selectedChat = () => {
+    dispatch(removeSelectedChat());
+    dispatch(addSelectedChat({id, data}));
+    history.push(`/chat/${data.myMatch.user.displayName.toLowerCase().split(' ').join('')}`);
+  }
 
   return (
-    <ChatRowContainer onClick={() => history.push(`/chat/${id}`)}>
+    <ChatRowContainer onClick={selectedChat}>
       <div className="container">
-        <Avatar src={profileImg} />
+        <Avatar src={data.myMatch.user.photoURL} />
 
         <div id="user__text">
-          <h3>{name}</h3>
-          <p>{message}</p>
+          <h3>{data.myMatch.user.displayName}</h3>
+          <p>{data.lastMessage?.message && ''}</p>
         </div>
 
-        <small>{timestamp}</small>
+        <small>{data.lastMessage ? data.lastMessage.timestamp : data.timestamp}</small>
       </div>
     </ChatRowContainer>
   );

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { selectUserData } from '../features/userSlice';
 import db from '../firebase';
 
-const TinderCards = ({ users, setUsers, childRefs }) => {
+const TinderCards = ({ users, setUsers, childRefs, swipeHandler }) => {
   const dispatch = useDispatch();
   const userData = useSelector(selectUserData);
 
@@ -17,9 +17,13 @@ const TinderCards = ({ users, setUsers, childRefs }) => {
     userData?.profile.chosenImage && 
     userData?.user.age;
   
+  
+  
   return (
     <TinderCardsContainer>
-    {!youAreGood ? <small className="youAreGood__text">Please go to your profile and set your preference, age, gender and image.</small> : 
+    
+    {!youAreGood ? <small className="youAreGood__text">Please go to your profile and set your preference, age, gender and image.</small> :
+    !users.length ? <small className="youAreGood__text">No people found to swipe on</small> :
     <div className="cards__container container">
       {users.map((user, index) => (
         <TinderCard
@@ -28,7 +32,11 @@ const TinderCards = ({ users, setUsers, childRefs }) => {
           onSwipe={(dir) => {
             console.log(dir)
           }}
-          onCardLeftScreen={() => setUsers(prev => prev.slice(0, prev.length - 1))}
+          // onCardLeftScreen={() => setUsers(prev => prev.slice(0, prev.length - 1))}
+          onCardLeftScreen={(dir) => {
+            setUsers(prev => prev.slice(0, prev.length - 1))
+            swipeHandler(dir)
+          }}
           preventSwipe={['up', 'down']}
           key={user.id}
         >

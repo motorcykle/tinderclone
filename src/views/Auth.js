@@ -8,7 +8,7 @@ const Auth = () => {
     auth
       .signInWithPopup(provider)
       .then((data) => {
-        const { displayName, photoURL, email } = data.user;
+        const { displayName, photoURL, email, uid } = data.user;
 
         if (data.additionalUserInfo.isNewUser) {
           db
@@ -16,7 +16,7 @@ const Auth = () => {
           .doc(data.user.uid)
           .set({
             user: { 
-              displayName, photoURL, email,
+              displayName, photoURL, email, uid,
               preference: '',
               gender: '',
               age: 0
@@ -26,8 +26,8 @@ const Auth = () => {
               images: [],
               description: '',
             },
-            lefts: [],
-            rights: [],
+            swipedOn: [uid],
+            swipedRight: []
           })
           .then(() => {
             console.log("Document successfully written!");

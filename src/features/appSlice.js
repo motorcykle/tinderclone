@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   profileUID: ``,
+  selectedChat: null
 };
 
 export const appSlice = createSlice({
@@ -15,11 +16,18 @@ export const appSlice = createSlice({
     removeProfileUID: (state) => {
       state.profileUID = null;
     },
+    addSelectedChat: (state, action) => {
+      state.selectedChat = action.payload;
+    },
+    removeSelectedChat: (state) => {
+      state.selectedChat = null;
+    },
   },
 });
 
-export const { addProfileUID, removeProfileUID } = appSlice.actions;
+export const { addProfileUID, removeProfileUID, addSelectedChat, removeSelectedChat } = appSlice.actions;
 export const selectProfileUID = (state) => state.app.profileUID;
+export const selectSelectedChat = (state) => state.app.selectedChat;
 
 
 export default appSlice.reducer;

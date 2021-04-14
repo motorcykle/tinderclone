@@ -15,7 +15,7 @@ import db, { auth } from './firebase';
 import Auth from './views/Auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, logout, selectUser, setData } from './features/userSlice';
-import { selectProfileUID } from './features/appSlice';
+import { removeProfileUID, removeSelectedChat, selectProfileUID } from './features/appSlice';
 
 function App() {
   const dispatch = useDispatch();
@@ -29,6 +29,8 @@ function App() {
         dispatch(login({ uid, photoURL, email, displayName }));
       } else {
         dispatch(logout());
+        dispatch(removeProfileUID());
+        dispatch(removeSelectedChat());
       }
     })
 

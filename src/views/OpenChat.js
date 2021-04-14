@@ -45,7 +45,7 @@ const OpenChat = () => {
   useEffect(() => {
     if (!chat) return;
 
-    const unsubscribe = matchesDoc.collection('messages').onSnapshot(snapshot => {
+    const unsubscribe = matchesDoc.collection('messages').orderBy('timestamp', 'asc').onSnapshot(snapshot => {
       const messageDocs = snapshot.docs.map(doc => ({id: doc.id, data: doc.data()}));
       setMessages(messageDocs);
     })
@@ -153,7 +153,8 @@ const OpenChatContainer = styled.div`
   .chat {
     /* padding: 1em .4em; */
     flex: 1;
-    
+    overflow: scroll;
+    max-height: 75vh;
     .message {
       position: relative;
       margin-right: auto;
